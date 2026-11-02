@@ -1,0 +1,6 @@
+- Wants game logic kept separate from rendering and UI (pure TypeScript engine). Confidence: 0.95
+- Values testability and determinism in game logic. Confidence: 0.9
+- Prefers to de-risk hardest parts first (build solvability checker before UI). Confidence: 0.9
+- Wants smallest vertical slice to prove core fun. Confidence: 0.9
+- Prefers a React Native ecosystem stack for mobile apps: zustand for state, react-native-mmkv for storage, react-native-gesture-handler for gestures, expo-av for audio. Confidence: 0.65
+- Prefers managed third-party services over custom backends for common needs (RevenueCat for IAP, AdMob for ads, Firebase for cloud saves/analytics). Confidence: 0.65

@@ -1,0 +1,5 @@
+- Prefers clarifying questions before receiving answers when requirements are ambiguous. Confidence: 0.95
+- Wants technical exploration and discussion before committing to a plan. Confidence: 0.95
+- Writes structured briefs (headings, numbered question lists) and expects responses organized section-by-section against that agenda. Confidence: 0.6
+- Gives terse go-ahead replies ("ask your question", "continue") and expects the agent to keep driving the process without hand-holding. Confidence: 0.6
+- Presents core technical decisions (stack, libraries) as "already decided" and expects them accepted as fixed constraints rather than re-litigated. Confidence: 0.6

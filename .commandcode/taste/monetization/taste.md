@@ -1,0 +1,2 @@
+- Wants monetization (ads/IAP) integrated without hurting core gameplay. Confidence: 0.9
+- Prefers optional rewards/abilities via ads/IAP rather than gating core puzzle solving. Confidence: 0.9

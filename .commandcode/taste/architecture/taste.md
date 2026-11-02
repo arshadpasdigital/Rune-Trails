@@ -1,0 +1,4 @@
+- Uses Expo React Native with TypeScript stack. Confidence: 0.95
+- Prefers Skia for GPU rendering and Reanimated for UI-thread animations. Confidence: 0.9
+- Values 60fps performance target. Confidence: 0.9
+- Wants solvability to be guaranteed (board never made unsolvable by hazards). Confidence: 0.95

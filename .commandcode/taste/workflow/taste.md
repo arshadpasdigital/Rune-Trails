@@ -1,0 +1,3 @@
+- Follows OpenSpec workflow structure for the project, driving it with slash commands: explore/discuss first (read-only, no files written), then a formal change proposal with design doc and tasks. Confidence: 0.9
+- Wants milestone-based implementation plan. Confidence: 0.9
+- Installs dependencies and tooling himself, then asks the agent to verify the actual installed state (read package.json, run doctor/diagnostics) instead of having the agent assume or perform the installs. Confidence: 0.55
