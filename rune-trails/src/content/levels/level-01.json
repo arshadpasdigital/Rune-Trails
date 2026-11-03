@@ -1,0 +1,38 @@
+{
+  "id": "level-01",
+  "name": "First Steps",
+  "width": 4,
+  "height": 4,
+  "pairs": [
+    {
+      "id": 1,
+      "element": "fire",
+      "endpoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "element": "water",
+      "endpoints": [
+        {
+          "x": 2,
+          "y": 0
+        },
+        {
+          "x": 3,
+          "y": 2
+        }
+      ]
+    }
+  ],
+  "terrain": [],
+  "hazardScript": []
+}

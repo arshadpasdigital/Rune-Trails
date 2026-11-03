@@ -1,0 +1,92 @@
+{
+  "id": "level-09",
+  "name": "The Wide Weave",
+  "width": 6,
+  "height": 6,
+  "pairs": [
+    {
+      "id": 1,
+      "element": "fire",
+      "endpoints": [
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 5
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "element": "water",
+      "endpoints": [
+        {
+          "x": 1,
+          "y": 5
+        },
+        {
+          "x": 2,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "element": "earth",
+      "endpoints": [
+        {
+          "x": 3,
+          "y": 0
+        },
+        {
+          "x": 2,
+          "y": 5
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "element": "earth",
+      "endpoints": [
+        {
+          "x": 3,
+          "y": 5
+        },
+        {
+          "x": 5,
+          "y": 3
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "element": "water",
+      "endpoints": [
+        {
+          "x": 4,
+          "y": 3
+        },
+        {
+          "x": 4,
+          "y": 1
+        }
+      ]
+    }
+  ],
+  "terrain": [
+    {
+      "x": 3,
+      "y": 3,
+      "kind": "lava"
+    }
+  ],
+  "hazardScript": [
+    {
+      "kind": "shift-row",
+      "row": 2,
+      "dx": -1
+    }
+  ]
+}

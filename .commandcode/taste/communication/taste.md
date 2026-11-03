@@ -3,3 +3,4 @@
 - Writes structured briefs (headings, numbered question lists) and expects responses organized section-by-section against that agenda. Confidence: 0.6
 - Gives terse go-ahead replies ("ask your question", "continue") and expects the agent to keep driving the process without hand-holding. Confidence: 0.6
 - Presents core technical decisions (stack, libraries) as "already decided" and expects them accepted as fixed constraints rather than re-litigated. Confidence: 0.6
+- Dislikes being asked again something he has already answered — resolve open points from existing artifacts/prior answers instead of re-asking the same question. Confidence: 0.6

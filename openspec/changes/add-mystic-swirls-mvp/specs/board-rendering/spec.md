@@ -8,7 +8,7 @@ Defines what the player sees and how tracing feels: a single GPU-rendered board 
 
 ### Requirement: Single board surface
 
-All board visuals — terrain, runes, committed paths, the in-progress trail, and completion effects — SHALL be drawn on one rendering surface for the playable board. HUD and menus SHALL remain outside that surface.
+All board visuals — terrain, runes, committed paths, the in-progress trail, hazard mutation animations and completion effects — SHALL be drawn on one rendering surface for the playable board. HUD and menus SHALL remain outside that surface.
 
 #### Scenario: Board layers share one surface
 
@@ -102,3 +102,29 @@ The board SHALL distinguish blocked terrain from traversable cells, highlight th
 
 - **WHEN** the turn-resolution guard rejects a hazard mutation
 - **THEN** the board shows that no environmental change occurred for that turn
+
+### Requirement: Hazard mutation animation
+
+Applied hazard mutations SHALL be animated on the board surface: a `shift-row` wind push SHALL slide the affected row's cells visibly to their new positions, and a rejected mutation SHALL play a brief shake or dim indication. Animations SHALL be driven by the turn-resolution event stream and SHALL NOT block the player's next trace.
+
+#### Scenario: Wind push slides cells
+
+- **WHEN** the guard accepts a `shift-row` mutation
+- **THEN** the affected row's cells animate from their old positions to their new positions
+- **AND** the animation order matches the event order emitted by turn resolution
+
+#### Scenario: Rejected mutation does not move cells
+
+- **WHEN** the guard rejects a hazard mutation
+- **THEN** no cell changes position
+- **AND** the board plays the rejection indication from the event stream
+
+#### Scenario: Tracing during hazard animation
+
+- **WHEN** a hazard animation is playing and the player begins a new trace
+- **THEN** the trace starts without waiting for the animation to finish
+- **AND** frame rate remains at or above 60 frames per second
+
+
+
+

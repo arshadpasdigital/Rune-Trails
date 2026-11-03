@@ -1,0 +1,44 @@
+{
+  "id": "level-02",
+  "name": "Gathering Wind",
+  "width": 4,
+  "height": 4,
+  "pairs": [
+    {
+      "id": 1,
+      "element": "earth",
+      "endpoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "element": "earth",
+      "endpoints": [
+        {
+          "x": 2,
+          "y": 0
+        },
+        {
+          "x": 3,
+          "y": 2
+        }
+      ]
+    }
+  ],
+  "terrain": [],
+  "hazardScript": [
+    {
+      "kind": "shift-row",
+      "row": 0,
+      "dx": -1
+    }
+  ]
+}

@@ -17,6 +17,7 @@ Requirements live in `specs/puzzle-engine`, `specs/turn-resolution`, `specs/leve
 - A turn pipeline whose steps are individually testable and whose output is a serializable event stream.
 - A solvability guarantee that is cheap at runtime and absolute at content-build time.
 - A rendering approach that keeps tracing on the UI thread and off React's render path.
+- Hazard mutations (wind row-push, rejections) animated from the event stream, so the board's "alive" feel is visible from the first slice.
 - Two feasibility spikes (solver, Skia/gesture) that can invalidate the plan before the app is built.
 
 **Non-Goals:**
@@ -86,7 +87,7 @@ Each step is a pure function returning a new state plus events. `HazardSource` i
 
 ### D4. Immutable committed paths, and mutations as data
 
-Hazards never modify a cell that belongs to a committed path. Mutations are inert records (`{ kind: 'shift-row', row, dx }`, `{ kind: 'spread', from, to }`, `{ kind: 'grow', cell }`) validated for legality before application.
+Hazards never modify a cell that belongs to a committed path. Mutations are inert records (`{ kind: 'shift-row', row, dx }`, `{ kind: 'spread', from, to }`, `{ kind: 'grow', cell }`) validated for legality before application. Shipped scripts in this slice use `shift-row` only, one row per completed connection; the first level starts with no hazard terrain, while later levels may include terrain so the element effects are exercised. `spread` and `grow` stay supported but unused by shipped content.
 
 **Why:** if a hazard could invalidate a committed path, every turn would require a full re-solve and the player would watch their work get destroyed. Fixing committed geometry also shrinks the search space for the guard from "solve the level" to "route the remaining pairs through the remaining cells."
 
@@ -94,7 +95,7 @@ Hazards never modify a cell that belongs to a committed path. Mutations are iner
 
 ### D5. Solvability is a content-build guarantee; runtime guard is a cheap safety net
 
-- **Build time (authoritative):** `content/validate.ts` runs in Node/CI. It performs a depth-first search with pruning over the level with committed paths fixed, and it simulates the scripted hazard sequence, checking every reachable state. A level is shippable only if all reachable states are solvable.
+- **Build time (authoritative):** `content/validate.ts` runs in Node/CI. It performs a depth-first search with pruning over the level with committed paths fixed, and it simulates the scripted hazard sequence, checking every reachable state. A level is shippable only if all reachable states are solvable.Validation runs under a 5000 ms per-level budget; a timeout is a validation failure that names the level and the failing script index rather than a silent pass.
 - **Runtime (defensive):** `engine/solver.ts` exposes the same `isSolvable(state, budgetMs)` with an 8 ms default budget. Timeout is treated as `unknown` and the mutation is *rejected* (conservative), so behavior is deterministic and never random.
 
 Pruning rules, in order: out-of-bounds/impassable rejection; degree check (a free cell with fewer than two usable neighbours must be an endpoint or dead-end); connected-component check (each remaining pair's endpoints must lie in the same free component); remaining-free-cell count ≥ sum of Manhattan distances; dead-end parity.
@@ -112,13 +113,15 @@ Pruning rules, in order: out-of-bounds/impassable rejection; degree check (a fre
   drawActiveTrail()              // reads useSharedValue on UI thread
   drawParticles()                // capped pool, preallocated
   drawRunes()                    // endpoints on top
+  animateHazardMutations()       // wind row-push slide, rejected-mutation shake; 
+                                 // driven by the event stream from D3 (task 4.6)
 </Canvas>
 ```
 
 - Gesture: a single `Gesture.Pan()` on the board. `onBegin/onUpdate` run as worklets, convert pointer position to a cell index, and perform orthogonal adjacency checks in worklet-safe pure code.
 - State crossing: `runOnJS` only on discrete events (path commit, connection complete). Pointer samples never cross the bridge.
 - Trail glow: three strokes of the same `Skia.Path` — wide low-alpha blurred halo, mid bloom, saturated core — with round caps. Path is built from cell centres, and only the leading segment is interpolated, which gives the magnetic feel and keeps rebuilds cheap.
-- `Paint` and `Path` objects are created outside `onDraw`; nothing is allocated per frame.
+- `Paint` and `Path` objects are created outside `onDraw`; nothing is allocated per frame. Hazard animations reuse the same preallocated objects and stay within the 60 fps budget measured in task 6.8.
 
 **Why one canvas:** a composed per-cell component tree would put hundreds of components on the render path and make z-ordering and shared-value wiring fragile. One surface also makes the frame budget measurable in one place.
 
@@ -127,6 +130,9 @@ Pruning rules, in order: out-of-bounds/impassable rejection; degree check (a fre
 ### D7. Store is a thin projection of committed events
 
 Zustand holds `BoardState`, session metadata, and the level list. It is updated only from committed events, never from pointer movement. An in-progress trace lives entirely in `render/` shared values; on commit, the store replaces its state with the turn result and the renderer reconciles.
+
+Haptic feedback is triggered by committed events only, mirroring the store rule above: a light impact fires on the connection event and a success notification on solved (see D3's event stream). Haptics live in platform/ alongside MMKV, behind a user-facing disable toggle persisted in the progress blob (D8), so engine and render layers never touch native feedback APIs directly.
+
 
 **Why:** this is what makes the frame-budget requirement in `specs/board-rendering` achievable while keeping the UI declarative.
 
@@ -143,6 +149,48 @@ Progress is a small JSON blob under a versioned key: `{ version, completed: stri
 - **Determinism:** replay a recorded action log and assert deep equality, including event order.
 - **Validator:** golden levels — a known-solvable level passes, a designed-unsolvable level fails, a budget-exceeded case fails rather than hangs.
 - **Rendering:** no unit tests for pixels; a manual device checklist plus a frame-rate measurement on the lowest supported device.
+
+## Spike results (tasks 2.1–2.6)
+
+**Solver (2.1, 2.2).** The depth-first solver with degree/component/minimum-length
+pruning, longest-pair-first ordering, and failed-occupancy memoization was run
+against the shipped 6×6 and 7×7 boards on Node 24. Representative cold runs:
+
+| Level | Board | Pairs | Runtime budget (8 ms) | Offline budget (5000 ms) |
+| --- | --- | --- | --- | --- |
+| level-05 | 6×6 | 4 | ~6 ms | solvable |
+| level-06 | 6×6 | 4 | ~3–4 ms | solvable |
+| level-07 | 6×6 | 5 | <1 ms | solvable |
+| level-08 | 6×6 | 5 | <1 ms | solvable |
+| level-09 | 6×6 | 5 | ~1 ms | solvable |
+| level-10 | 7×7 | 6 | <1 ms | solvable |
+
+Known-unsolvable boards are rejected in <1 ms. The committed envelope is:
+**shipped content 4×4–7×7 with 2–6 pairs; the solver supports up to 8×8 with at
+most 6 pairs.** Worst observed shipped case is ~7 ms, so the runtime guard can
+still time out conservatively on an unlucky device; that is the intended
+behaviour, not a correctness failure.
+
+**Rendering (2.3, 2.4).** The single-canvas Skia board, worklet gesture tracing,
+and event-driven hazard animations are implemented. Sustained ≥60 fps on the
+lowest target Android device could **not** be measured in this headless
+environment, so the glow tier is a provisional rule, not a measured finding:
+`selectGlowTier(totalMemoryMb)` returns `reduced` below 4096 MB (halo only, no
+bloom, particle cap 32) and `full` otherwise. Re-measure on device and update
+this section before treating the rendering spike as passed.
+
+**Assumptions (2.5).** Confirmed and unchanged: scripted hazard source; wind
+`shift-row` as the only hazard kind used by shipped scripts; an empty first
+level; immutable committed paths; `stone` permanent. Later levels may include
+`lava`/`stone` terrain so `water` is exercised. Shipped pairs use `fire`,
+`water`, and `earth`; `air` is not assigned to shipped content because its
+endpoint push is not modeled by the offline validator. All four elements remain
+fully supported and unit-tested.
+
+**Spike failures (2.6).** The solver spike passed. No design change was required.
+The rendering spike's device measurement is still outstanding (see 2.3/2.4), so
+gross visual/perf assumptions are unverified until the device checklist in
+`docs/device-checklist.md` is run.
 
 ## Risks / Trade-offs
 
@@ -167,6 +215,6 @@ Rollback: each milestone is additive and unreferenced until the playable screen 
 
 ## Open Questions
 
-- Grid size and pair count envelope to commit to for the first shipped set. Resolvable with the solver spike; affects the validator budget only, not the architecture.
+- ~~Grid size and pair count envelope.~~ Resolved by the solver spike: shipped content is 4×4–7×7 with 2–6 pairs; the solver supports up to 8×8 with at most 6 pairs. See "Spike results".
 - Whether `stone` can ever become traversable in later content. Deferred; this slice treats it as permanent.
-- Exact glow quality tiers per device class. Resolvable during the rendering spike; does not change the API.
+- ~~Exact glow quality tiers per device class.~~ A provisional rule is recorded (`selectGlowTier`: reduced below 4096 MB). Device measurement on the lowest target Android remains outstanding; the tier rule does not change any API.

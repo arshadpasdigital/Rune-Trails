@@ -96,6 +96,12 @@ After the element effect and hazard mutation are applied, the system SHALL verif
 - **WHEN** a hazard mutation leaves at least one solution
 - **THEN** the mutation is applied and a hazard-applied event is emitted
 
+#### Scenario: Guard timeout is conservatively rejected
+
+- **WHEN** the solvability check exceeds its 8 ms runtime budget
+- **THEN** the mutation is discarded exactly as if solvability had failed
+- **AND** a hazard-rejected event naming the mutation and a `timeout` reason appears in the event stream
+
 ### Requirement: Ordered event emission
 
 Each turn SHALL emit an ordered, serializable event stream sufficient to drive rendering, animation, and replay, covering connection commit, element effect, hazard application or rejection, and level solved.

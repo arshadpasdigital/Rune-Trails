@@ -84,9 +84,10 @@ Validation SHALL run as a non-interactive command in continuous integration and 
 
 ### Requirement: Validation completes within a budget
 
-Validation of a shipped level set SHALL complete within a bounded time so it can gate continuous integration. A level exceeding its per-level budget SHALL fail validation rather than block indefinitely.
+Validation of a shipped level set SHALL complete within a bounded time so it can gate continuous integration.The per-level search budget SHALL be 5000 milliseconds by default, configurable for local authoring. A level exceeding its per-level budget SHALL fail validation rather than block indefinitely, reporting the level name, the failing state, and the script index.
 
 #### Scenario: Slow level fails instead of hanging
 
-- **WHEN** validating a level exceeds its configured search budget
+- **WHEN** validating a level exceeds its configured search budget of 5000 ms
 - **THEN** validation reports the level as failed with a budget-exceeded reason
+- **AND** the report names the level and the script index at which the budget was exhausted

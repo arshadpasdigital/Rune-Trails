@@ -1,0 +1,100 @@
+{
+  "id": "level-10",
+  "name": "Final Knot",
+  "width": 7,
+  "height": 7,
+  "pairs": [
+    {
+      "id": 1,
+      "element": "water",
+      "endpoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 5
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "element": "fire",
+      "endpoints": [
+        {
+          "x": 1,
+          "y": 4
+        },
+        {
+          "x": 2,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "element": "earth",
+      "endpoints": [
+        {
+          "x": 2,
+          "y": 3
+        },
+        {
+          "x": 3,
+          "y": 3
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "element": "earth",
+      "endpoints": [
+        {
+          "x": 3,
+          "y": 2
+        },
+        {
+          "x": 4,
+          "y": 4
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "element": "fire",
+      "endpoints": [
+        {
+          "x": 4,
+          "y": 5
+        },
+        {
+          "x": 6,
+          "y": 4
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "element": "water",
+      "endpoints": [
+        {
+          "x": 6,
+          "y": 3
+        },
+        {
+          "x": 5,
+          "y": 1
+        }
+      ]
+    }
+  ],
+  "terrain": [],
+  "hazardScript": [
+    {
+      "kind": "shift-row",
+      "row": 0,
+      "dx": -1
+    }
+  ]
+}

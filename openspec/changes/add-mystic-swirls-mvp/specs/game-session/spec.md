@@ -86,3 +86,23 @@ If persisted progress cannot be read or is structurally invalid, the session SHA
 - **WHEN** persisted progress is unreadable or invalid
 - **THEN** the app opens at the first level with no crash
 - **AND** subsequent completion writes valid progress
+
+### Requirement: Haptic feedback
+
+The session SHALL trigger haptic feedback on committed events: a light impact when a pair connection completes, and a success notification when the level is solved. Haptics SHALL be fired only from committed events, never from pointer movement. The player SHALL be able to disable haptics, and the preference SHALL persist across app restarts.
+
+#### Scenario: Connection produces a light impact
+
+- **WHEN** a pair connection is committed
+- **THEN** a light haptic impact fires
+
+#### Scenario: Solving produces a success notification
+
+- **WHEN** the engine reports the level solved
+- **THEN** a success haptic notification fires alongside the completion state
+
+#### Scenario: Haptics respect the disable toggle
+
+- **WHEN** the player has disabled haptics in settings
+- **THEN** no haptic feedback fires on connection or solve
+- **AND** the setting persists after app restart

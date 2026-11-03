@@ -1,0 +1,66 @@
+{
+  "id": "level-05",
+  "name": "Long Route",
+  "width": 6,
+  "height": 6,
+  "pairs": [
+    {
+      "id": 1,
+      "element": "fire",
+      "endpoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 3
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "element": "water",
+      "endpoints": [
+        {
+          "x": 1,
+          "y": 2
+        },
+        {
+          "x": 2,
+          "y": 5
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "element": "earth",
+      "endpoints": [
+        {
+          "x": 3,
+          "y": 5
+        },
+        {
+          "x": 5,
+          "y": 1
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "element": "earth",
+      "endpoints": [
+        {
+          "x": 4,
+          "y": 1
+        },
+        {
+          "x": 5,
+          "y": 4
+        }
+      ]
+    }
+  ],
+  "terrain": [],
+  "hazardScript": []
+}
