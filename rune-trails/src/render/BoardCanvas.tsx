@@ -23,7 +23,7 @@ import { GameEvent } from "../sim/events";
 import { cellCenter, computeLayout } from "./layout";
 import { ELEMENT_PALETTE, TERRAIN_COLORS } from "./palette";
 
-interface BoardCanvasProps {
+export interface BoardCanvasProps {
   board: BoardState;
   size: number;
   events: GameEvent[];

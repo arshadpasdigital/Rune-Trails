@@ -7,7 +7,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { BoardCanvas } from "../render/BoardCanvas";
+import { BoardCanvasHost } from "../render/BoardCanvasHost";
 import { hudState, isUnlocked, nextLevelId } from "../state/sessionLogic";
 import { useSessionStore } from "../state/store";
 
@@ -98,7 +98,7 @@ export default function PlayScreen() {
         </Pressable>
       </View>
 
-      <BoardCanvas
+      <BoardCanvasHost
         board={board}
         size={boardSize}
         events={events}
